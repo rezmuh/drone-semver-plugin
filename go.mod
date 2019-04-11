@@ -1,3 +1,6 @@
-module github.com/rezmuh/docker-semver-plugin
+module github.com/rezmuh/drone-semver-plugin
 
-require github.com/coreos/go-semver v0.2.0
+require (
+	github.com/aws/aws-sdk-go v1.15.77
+	github.com/coreos/go-semver v0.2.0
+)
