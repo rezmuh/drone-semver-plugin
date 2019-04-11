@@ -14,7 +14,7 @@ import (
 )
 
 // DownloadVersionFile downloads version file from S3
-func DownloadVersionFile(bucket, key, initialVersion, versionFile string) {
+func DownloadVersionFile(region, bucket, key, initialVersion, versionFile string) {
 	file, err := os.OpenFile(versionFile, os.O_CREATE|os.O_WRONLY, 0644)
 
 	if err != nil {
@@ -23,7 +23,9 @@ func DownloadVersionFile(bucket, key, initialVersion, versionFile string) {
 
 	defer file.Close()
 
-	sess := session.Must(session.NewSession())
+	sess := session.Must(session.NewSession(&aws.Config{
+		Region: aws.String(region),
+	}))
 	downloader := s3manager.NewDownloader(sess)
 
 	// we don't care if it fails as it already created a versionFile
@@ -45,8 +47,10 @@ func DownloadVersionFile(bucket, key, initialVersion, versionFile string) {
 }
 
 // UpdateVersionFile for S3 updates the content within versionFile to S3
-func UpdateVersionFile(bucket, key, versionFile string) {
-	sess := session.Must(session.NewSession())
+func UpdateVersionFile(region, bucket, key, versionFile string) {
+	sess := session.Must(session.NewSession(&aws.Config{
+		Region: aws.String(region),
+	}))
 	uploader := s3manager.NewUploader(sess)
 
 	file, err := os.OpenFile(versionFile, os.O_RDONLY, 0644)

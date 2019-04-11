@@ -25,6 +25,7 @@ type Bump struct {
 // StorageConfiguration normalizes different field from different
 // storage type
 type StorageConfiguration struct {
+	Region string
 	Source string // this can be url, bucket, etc
 	Path string
 }
@@ -47,8 +48,13 @@ func FromEnv() (Configuration, error) {
 
 	switch storage {
 	case "s3":
+		region := os.Getenv("PLUGIN_AWS_REGION")
 		bucket := os.Getenv("PLUGIN_AWS_BUCKET")
 		key := os.Getenv("PLUGIN_AWS_KEY")
+
+		if region == "" {
+			region = "ap-southeast-1"
+		}
 		
 		if bucket == "" {
 			err := errors.New("Bucket is required when choosing aws storage")
@@ -59,7 +65,9 @@ func FromEnv() (Configuration, error) {
 			err := errors.New("key is required when choosing aws storage")
 			return c, err
 		}
+
 		sc = StorageConfiguration{
+			Region: region,
 			Source: bucket,
 			Path: key,
 		}

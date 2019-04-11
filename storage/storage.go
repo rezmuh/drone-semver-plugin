@@ -11,12 +11,13 @@ func DownloadVersionFile(c *config.Configuration) {
 
 	switch c.Storage {
 	case "s3":
+		region := c.StorageConfig.Region
 		bucket := c.StorageConfig.Source
 		key := c.StorageConfig.Path
 		versionFile := c.VersionFile
 		initialVersion := c.InitialVersion
 
-		s3.DownloadVersionFile(bucket, key, initialVersion, versionFile)
+		s3.DownloadVersionFile(region, bucket, key, initialVersion, versionFile)
 	}
 }
 
@@ -25,11 +26,12 @@ func DownloadVersionFile(c *config.Configuration) {
 func UpdateVersionFile(c *config.Configuration) {
 	switch c.Storage {
 	case "s3":
+		region := c.StorageConfig.Region
 		bucket := c.StorageConfig.Source
 		key := c.StorageConfig.Path
 		versionFile := c.VersionFile
 
-		s3.UpdateVersionFile(bucket, key, versionFile)
+		s3.UpdateVersionFile(region, bucket, key, versionFile)
 	}
 
 }
