@@ -68,14 +68,15 @@ func FromEnv() (Configuration, error) {
 		return c, err
 	}
 
-	switch operation {
-	case "bump":
+	if operation == "bump" {
 		b = Bump{
 			Increment: increment,
 			Metadata: metadata,
 			PreRelease: preRelease,
 		}
-	default:
+	}
+
+	if operation == "" {
 		err := errors.New("Operation is a required field")
 		return c, err
 	}

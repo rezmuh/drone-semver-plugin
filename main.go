@@ -19,5 +19,7 @@ func main() {
 	case "bump":
 		storage.DownloadVersionFile(&c)
 		version.BumpVersion(&c)
+	case "put":
+		storage.UpdateVersionFile(&c)
 	}
 }

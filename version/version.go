@@ -9,15 +9,20 @@ import (
 	"github.com/rezmuh/drone-semver-plugin/util"
 )
 
-// BumpVersion bumps version number and write the
-// updated version to c.VersionFile
-func BumpVersion(c *config.Configuration) {
-	currentVersion, err := ioutil.ReadFile(c.VersionFile)
-
+// GetVersion returns current version number from file
+func GetVersion(versionFile string) *semver.Version {
+	currentVersion, err := ioutil.ReadFile(versionFile)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	v := semver.New(string(currentVersion))
+
+	return semver.New(string(currentVersion))
+}
+
+// BumpVersion bumps version number and write the
+// updated version to c.VersionFile
+func BumpVersion(c *config.Configuration) {
+	v := GetVersion(c.VersionFile)
 
 	switch c.Bump.Increment {
 	case "major":

@@ -19,3 +19,17 @@ func DownloadVersionFile(c *config.Configuration) {
 		s3.DownloadVersionFile(bucket, key, initialVersion, versionFile)
 	}
 }
+
+// UpdateVersionFile updates bumped version number
+// and then stores it back to the storage
+func UpdateVersionFile(c *config.Configuration) {
+	switch c.Storage {
+	case "s3":
+		bucket := c.StorageConfig.Source
+		key := c.StorageConfig.Path
+		versionFile := c.VersionFile
+
+		s3.UpdateVersionFile(bucket, key, versionFile)
+	}
+
+}

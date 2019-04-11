@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/rezmuh/drone-semver-plugin/util"
 
-	// "bytes"
+	"bytes"
 	"log"
 	"os"
 )
@@ -44,39 +44,28 @@ func DownloadVersionFile(bucket, key, initialVersion, versionFile string) {
 	}
 }
 
-// func createVersionFile(versionFile string) {
-// 	bucket := os.Getenv("PLUGIN_AWS_BUCKET")
-// 	key := os.Getenv("PLUGIN_AWS_KEY")
+// UpdateVersionFile for S3 updates the content within versionFile to S3
+func UpdateVersionFile(bucket, key, versionFile string) {
+	sess := session.Must(session.NewSession())
+	uploader := s3manager.NewUploader(sess)
 
-// 	if bucket == "" {
-// 		log.Fatalln("aws_bucket field is required")
-// 	}
+	file, err := os.OpenFile(versionFile, os.O_RDONLY, 0644)
 
-// 	if key == "" {
-// 		log.Fatalln("aws_key field is required")
-// 	}
+	defer file.Close()
 
-// 	sess := session.Must(session.NewSession())
-// 	uploader := s3manager.NewUploaderWithClient(sess)
+	fileInfo, _ := file.Stat()
+	size := fileInfo.Size()
+	buffer := make([]byte, size)
+	file.Read(buffer)
 
-//     file, err := os.Open(versionFile)
-//     if err != nil {
-//         log.Fatalln("could not read version file")
-//     }
-//     defer file.Close()
+	params := &s3manager.UploadInput{
+		Bucket: &bucket,
+		Key   : &key,
+		Body  : bytes.NewReader(buffer),
+	}
+	_, err = uploader.Upload(params)
 
-//     // Get file size and read the file content into a buffer
-//     fileInfo, _ := file.Stat()
-//     var size = fileInfo.Size()
-//     buffer := make([]byte, size)
-//     file.Read(buffer)
-
-// 	params := &s3manager.UploadInput{
-//     	Bucket: &bucket,
-//     	Key:    &key,
-//     	Body:   bytes.NewReader(buffer),
-// 	}
-
-// 	// Perform an upload.
-// 	result, err := uploader.Upload(params)
-// }
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
