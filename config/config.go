@@ -46,6 +46,24 @@ func FromEnv() (Configuration, error) {
 	preRelease := os.Getenv("PLUGIN_PRERELEASE")
 	initialVersion := os.Getenv("PLUGIN_INITIAL_VERSION")
 
+	if operation == "" {
+		err := errors.New("Operation is a required field")
+		return c, err
+	}
+
+	if operation == "bump" {
+
+		if increment == "" {
+			increment = "patch"
+		}
+
+		b = Bump{
+			Increment: increment,
+			Metadata: metadata,
+			PreRelease: preRelease,
+		}
+	}
+
 	switch storage {
 	case "s3":
 		region := os.Getenv("PLUGIN_AWS_REGION")
@@ -62,7 +80,7 @@ func FromEnv() (Configuration, error) {
 		}
 
 		if key == "" {
-			err := errors.New("key is required when choosing aws storage")
+			err := errors.New("Key is required when choosing aws storage")
 			return c, err
 		}
 
@@ -76,21 +94,8 @@ func FromEnv() (Configuration, error) {
 		return c, err
 	}
 
-	if operation == "bump" {
-		b = Bump{
-			Increment: increment,
-			Metadata: metadata,
-			PreRelease: preRelease,
-		}
-	}
-
-	if operation == "" {
-		err := errors.New("Operation is a required field")
-		return c, err
-	}
-
 	if versionFile == "" {
-		versionFile = "version.txt"
+		versionFile = ".tags"
 	}
 
 	c = Configuration{
