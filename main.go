@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/rezmuh/drone-semver-plugin/storage"
 	"github.com/rezmuh/drone-semver-plugin/config"
+	"github.com/rezmuh/drone-semver-plugin/storage"
 	"github.com/rezmuh/drone-semver-plugin/version"
 )
 

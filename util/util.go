@@ -10,6 +10,12 @@ func WriteToFile(filename, content string) error {
 		return err
 	}
 
+	err = os.Truncate(filename, 0)
+
+	if err != nil {
+		return err
+	}
+
 	_, err = f.WriteString(content)
 
 	if err != nil {

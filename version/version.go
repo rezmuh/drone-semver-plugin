@@ -1,6 +1,7 @@
 package version
 
 import (
+	"fmt"
 	"log"
 	"strings"
 	"io/ioutil"
@@ -11,20 +12,20 @@ import (
 )
 
 // GetVersion returns current version number from file
-func GetVersion(versionFile string) *semver.Version {
-	currentVersion, err := ioutil.ReadFile(versionFile)
+func GetVersion(c *config.Configuration) *semver.Version {
+	currentVersion, err := ioutil.ReadFile(c.VersionFile)
 	if err != nil {
 		log.Fatalln(err)
 	}
-
-	v := strings.TrimSpace(string(currentVersion))
+	versionText := fmt.Sprintf("%s", currentVersion)
+	v := strings.TrimSpace(versionText)
 	return semver.New(v)
 }
 
 // BumpVersion bumps version number and write the
 // updated version to c.VersionFile
 func BumpVersion(c *config.Configuration) {
-	v := GetVersion(c.VersionFile)
+	v := GetVersion(c)
 	log.Println("current version is: ", v)
 
 	switch c.Bump.Increment {
